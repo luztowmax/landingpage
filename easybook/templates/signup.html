@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - EasyBook Inventory</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      color: #0e76a8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    form {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    input {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border: 1px solid #0e76a8;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: #0e76a8;
+    }
+    input::placeholder {
+      color: #0e76a8;
+      opacity: 0.7;
+    }
+    button {
+      background: #0e76a8;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #095a8a;
+    }
+  </style>
+</head>
+<body>
+  <form id="paymentForm">
+    <input type="text" id="email-address" placeholder="Email Address" required />
+    <div style="position: relative;">
+      <input type="password" id="password" placeholder="Password" required style="padding-right: 2rem;" />
+      <span id="togglePassword" style="position: absolute; top: 50%; right: 0.5rem; transform: translateY(-50%); cursor: pointer;">
+        👁️
+      </span>
+    </div>
+    <input type="text" id="full-name" placeholder="Full Name" required />
+    <input type="text" id="telephone" placeholder="Telephone" required />
+    <button type="submit">Sign Up & Pay</button>
+  </form>
+  
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    const paymentForm = document.getElementById('paymentForm');
+    paymentForm.addEventListener('submit', payWithPaystack, false);
+  
+    function payWithPaystack(e) {
+      e.preventDefault();
+  
+      const email = document.getElementById("email-address").value;
+      const password = document.getElementById("password").value;
+      const fullName = document.getElementById("full-name").value;
+      const telephone = document.getElementById('telephone').value;
+  
+      let handler = PaystackPop.setup({
+        key: "pk_live_b122dd5003bdfeeb77b9390abc9c423d71bd7f5d",
+        email: email,
+        amount: 300000 * 100, // N300000
+        currency: "NGN",
+        callback: function (response) {
+          window.location.href = `/verify-payment/?full_name=${fullName}&ref=${response.reference}`;
+        },
+        onClose: function () {
+          alert("Payment window closed.");
+        }
+      });
+  
+      handler.openIframe();
+    }
+  
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+  
+    togglePassword.addEventListener('click', function (e) {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+  </script>
+</body>
+</html>
